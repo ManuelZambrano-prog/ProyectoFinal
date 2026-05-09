@@ -1,0 +1,65 @@
+{% extends "tienda/base.html" %}
+{% block title %}Buscar{% endblock %}
+
+{% block content %}
+<h1>Buscar productos</h1>
+<div id="loadingOverlay" class="loading-overlay" aria-hidden="true">
+    <div class="loader" role="status" aria-label="Buscando"></div>
+</div>
+
+<form id="buscarForm" method="get">
+    {% csrf_token %}
+    <input type="text" name="q" placeholder="Describe lo que buscas..." value="{{ q|default:'' }}" />
+    <button id="buscarBtn" class="btn primary" type="submit">Buscar</button>
+</form>
+
+{% if q %}
+    <h3>Resultados para "{{ q }}"</h3>
+    <ul>
+        {% for r in resultados %}
+            <li>
+                <a href="{% url 'tienda:detalle_producto' r.id %}">
+                    {{ r.nombre }} - ${{ r.precio }} <br>
+                    <small>{{ r.descripcion }}</small>
+                    <em>score: {{ r.score|floatformat:3 }}</em>
+                </a>
+            </li>
+        {% empty %}
+            <li>Sin resultados.</li>
+        {% endfor %}
+    </ul>
+{% endif %}
+{% endblock %}
+
+{% block scripts %}
+<script>
+(function() {
+    const form = document.getElementById('buscarForm');
+    const btn = document.getElementById('buscarBtn');
+    const overlay = document.getElementById('loadingOverlay');
+
+    if(!form || !btn || !overlay) return;
+
+    form.addEventListener('submit', function() {
+        overlay.style.display = 'flex';
+        overlay.setAttribute('aria-hidden', 'false');
+
+        btn.classList.add('loading');
+        btn.dataset.loadingLabel = 'Buscando...';
+        btn.setAttribute('aria-busy', 'true');
+        btn.disabled = true;
+    });
+
+    window.addEventListener('pageshow', function() {
+        overlay.style.display = 'none';
+        overlay.setAttribute('aria-hidden', 'true');
+
+        btn.classList.remove('loading');
+        btn.removeAttribute('data-loading-label');
+        btn.removeAttribute('aria-busy');
+        btn.disabled = false;
+    });
+
+})();
+</script>
+{% endblock %}

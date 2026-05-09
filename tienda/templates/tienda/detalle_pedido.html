@@ -1,0 +1,58 @@
+{% extends 'tienda/base.html' %}
+{% block title %}Pedido# {{pedido.id }} {% endblock %}
+
+{% block content %}
+<h1>Pedido # {{ pedido.id }}</h1>
+<p><b>Cliente:</b>{{ pedido.cliente.nombre }}</p>
+<p><b>Fecha:</b>{{ pedido.fecha|date:"d/m/Y H:i" }}</p>
+<p><b>Estado:</b>{{ pedido.estado }}</p>
+
+<h3>Productos</h3>
+<p>
+    <a href="{% url 'tienda:eliminar_pedido' pedido.pk %}" class="btn delete">Eliminar pedido</a>
+</p>
+{% if items %}
+    <table>
+        <thead>
+            <tr>
+                <th class="encabezado">Producto</th>
+                <th class="encabezado">Cantidad</th>
+                <th class="encabezado">Precio Unitario</th>
+                <th class="encabezado">Subtotal</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for it in items %}
+                <tr>
+                    <td>{{ it.producto.nombre }}</td>
+                    <td>{{ it.cantidad }}</td>
+                    <td>${{ it.precio_unitario|floatformat:2 }}</td>
+                    <td>${{ it.line_total|floatformat:2 }}</td>
+                </tr>
+            {% empty %}
+                <tr>
+                    <td colspan="4">Este pedido no tiene ítems.</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+        <tfoot>
+            <tr>
+                <td colspan="3" class="total">Total a pagar:</td>
+                <td class="total">${{ total_pedido|floatformat:2 }}</td>
+            </tr>
+        </tfoot>
+    </table>
+{% else %}
+    <p>Este pedido a+un no tiene ítems.</p>
+{% endif %}
+
+<p>
+    <a href ="{% url 'tienda:editar_pedido_items' pedido.pk %}" class="btn primary">
+        Editar pedido</a>
+    <a href ="{% url 'tienda:eliminar_pedido' pedido.pk %}" class="btn primary">
+        Eliminar pedido</a>
+    <a href ="{% url 'tienda:lista_pedidos'%}" class="btn primary">
+        Volver a la lista de pedidos</a>
+</p>
+
+{% endblock %}

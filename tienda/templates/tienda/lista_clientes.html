@@ -1,0 +1,25 @@
+{% extends 'tienda/base.html' %}
+{% block title %}Lista de Clientes{% endblock %}
+
+{% block content %}
+    <h1>Lista de Clientes</h1>
+
+    <p>
+        <a href="{% url 'tienda:crear_cliente' %}" class="btn primary"> Nuevo Cliente </a>
+    </p>
+
+    <ul>
+
+        {% for c in clientes %}
+            <li>
+                <a href="{% url 'tienda:detalle_cliente' c.pk %}" class="btn primary">
+                    Cliente #{{ c.pk }}
+                </a>
+                - Nombre: {{c.nombre}}
+                - Email: {{c.email}}
+            </li>
+            {%empty%}
+                <li>No hay clientes disponibles</li>
+        {% endfor %}
+    </ul>
+{% endblock %}

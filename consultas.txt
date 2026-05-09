@@ -1,0 +1,143 @@
+from tienda.models import Producto, Cliente, Pedido
+from django.db.models import Q, Count, Avg, Max, Min
+
+# ══════════════════════════════════════════════════
+#  20 CONSULTAS SIMPLES (1 TABLA)
+# ══════════════════════════════════════════════════
+
+# 1. Todos los productos
+Producto.objects.all()
+
+# 2. Todos los clientes
+Cliente.objects.all()
+
+# 3. Todos los pedidos
+Pedido.objects.all()
+
+# 4. Productos con precio mayor a 100
+Producto.objects.filter(precio__gt=100)
+
+# 5. Productos con precio menor a 50
+Producto.objects.filter(precio__lt=50)
+
+# 6. Productos con precio entre 50 y 200
+Producto.objects.filter(precio__gte=50, precio__lte=200)
+
+# 7. Producto con precio exactamente 80
+Producto.objects.filter(precio=80.00)
+
+# 8. Productos cuyo nombre contiene "Gaming"
+Producto.objects.filter(nombre__contains="Gaming")
+
+# 9. Productos cuyo nombre empieza con "M"
+Producto.objects.filter(nombre__startswith="M")
+
+# 10. Productos ordenados de mayor a menor precio
+Producto.objects.all().order_by("-precio")
+
+# 11. Los 3 productos más baratos
+Producto.objects.all().order_by("precio")[:3]
+
+# 12. Clientes activos
+Cliente.objects.filter(activo=True)
+
+# 13. Clientes inactivos
+Cliente.objects.filter(activo=False)
+
+# 14. Cliente por email exacto
+Cliente.objects.filter(email="ana@email.com")
+
+# 15. Clientes cuyo nombre empieza con "C"
+Cliente.objects.filter(nombre__startswith="C")
+
+# 16. Pedidos con estado CREADO
+Pedido.objects.filter(estado="CREADO")
+
+# 17. Pedidos con estado ENVIADO o PAGADO
+Pedido.objects.filter(Q(estado="ENVIADO") | Q(estado="PAGADO"))
+
+# 18. Contar cuántos pedidos hay en total
+Pedido.objects.count()
+
+# 19. Precio promedio de todos los productos
+Producto.objects.aggregate(promedio=Avg("precio"))
+
+# 20. Precio máximo y mínimo de productos
+Producto.objects.aggregate(maximo=Max("precio"), minimo=Min("precio"))
+
+
+# ══════════════════════════════════════════════════
+#  10 CONSULTAS DE 2 TABLAS
+# ══════════════════════════════════════════════════
+
+# 1. Pedidos del cliente con id=1
+#    Pedido → Cliente
+Pedido.objects.filter(cliente__id=1)
+
+# 2. Pedidos buscando por nombre del cliente
+#    Pedido → Cliente
+Pedido.objects.filter(cliente__nombre="Ana García")
+
+# 3. Pedidos de clientes activos
+#    Pedido → Cliente
+Pedido.objects.filter(cliente__activo=True)
+
+# 4. Clientes que tienen al menos un pedido CERRADO
+#    Cliente → Pedido (usando related_name)
+Cliente.objects.filter(pedidos__estado="CERRADO").distinct()
+
+# 5. Clientes que tienen al menos un pedido
+#    Cliente → Pedido
+Cliente.objects.filter(pedidos__isnull=False).distinct()
+
+# 6. Pedidos que contienen productos con precio mayor a 100
+#    Pedido → Producto
+Pedido.objects.filter(productos__precio__gt=100).distinct()
+
+# 7. Pedidos que contienen el producto con id=1
+#    Pedido → Producto
+Pedido.objects.filter(productos__id=1)
+
+# 8. Productos que están en algún pedido PAGADO
+#    Producto → Pedido (usando related_name)
+Producto.objects.filter(pedidos__estado="PAGADO").distinct()
+
+# 9. Productos que nunca han sido pedidos
+#    Producto → Pedido
+Producto.objects.filter(pedidos__isnull=True)
+
+# 10. Clientes ordenados por cantidad de pedidos de mayor a menor
+#     Cliente → Pedido con annotate
+Cliente.objects.annotate(total_pedidos=Count("pedidos")).order_by("-total_pedidos")
+
+
+# ══════════════════════════════════════════════════
+#  5 CONSULTAS DE 3 TABLAS
+# ══════════════════════════════════════════════════
+
+# 1. Clientes que tienen pedidos con productos de precio mayor a 500
+#    Cliente → Pedido → Producto
+Cliente.objects.filter(pedidos__productos__precio__gt=500).distinct()
+
+# 2. Clientes que han pedido un producto por nombre específico
+#    Cliente → Pedido → Producto
+Cliente.objects.filter(pedidos__productos__nombre="Laptop Gaming").distinct()
+
+# 3. Productos pedidos por clientes activos
+#    Producto → Pedido → Cliente
+Producto.objects.filter(pedidos__cliente__activo=True).distinct()
+
+# 4. Productos en pedidos ENVIADOS de clientes activos
+#    Producto → Pedido → Cliente
+Producto.objects.filter(
+    pedidos__estado="ENVIADO",
+    pedidos__cliente__activo=True
+).distinct()
+
+# 5. Clientes activos con pedidos CERRADOS que tienen productos de menos de 50
+#    Cliente → Pedido → Producto
+Cliente.objects.filter(
+    activo=True,
+    pedidos__estado="CERRADO",
+    pedidos__productos__precio__lt=50
+).distinct()

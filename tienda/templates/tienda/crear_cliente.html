@@ -1,0 +1,16 @@
+{% extends 'tienda/base.html' %}
+{% block title %}Crear cliente {% endblock %}
+
+{% block content %}
+
+<h1> Crear un cliente </h1>
+<form method="POST">
+    {% csrf_token %}
+
+    {{ form.as_p }}
+    <!--Renderizado rápido: cada campo envuelto en <p> con labels y errores-->
+    <button type="submit" class="btn primary">Guardar</button>
+
+</form>
+<p> <a href="{% url 'tienda:lista_clientes' %}" class="btn primary"> Volver a la lista </a></p>
+{% endblock %}

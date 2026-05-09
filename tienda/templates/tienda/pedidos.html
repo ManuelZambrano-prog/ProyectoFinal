@@ -1,0 +1,9 @@
+{% extends "tienda/base.html" %}
+
+{%block title%} {{producto.nombre}} - Detalle del producto{%endblock%}
+
+{% block content %} 
+    <h1>{{producto.nombre}}</h1>
+    <p>{{producto.descripcion}}</p>
+    <p><strong>Precio:</strong> ${{ producto.precio|floatformat:2 }}</p>
+{%endblock%}
