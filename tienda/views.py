@@ -5,7 +5,8 @@ from .models import Producto, Cliente, Pedido
 from.forms import ProductoForm, ClienteForm, PedidoSimpleForm, PedidoItemFormSet
 from tienda import models
 from django.views.decorators.http import require_GET
-from core.ia.buscador import buscar_productos
+from core.ia.tiempo_viaje.predictor import buscar_productos
+
 '''
 Vista de inicio
 '''
