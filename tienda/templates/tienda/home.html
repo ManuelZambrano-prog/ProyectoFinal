@@ -1,7 +1,183 @@
 {% extends "tienda/base.html" %}
 
-{%block title%}Inicio - DJango AI Lab{%endblock%}
+{% block title %}Dashboard - DJango AI Lab{% endblock %}
 
-{% block content %} 
-<h1>¡Bienvenido!</h1>
-{%endblock%}
+{% block content %}
+<section class="dashboard-header">
+    <div>
+        <p class="eyebrow">Panel central</p>
+        <h1>Centro de control de pedidos y clientes</h1>
+        <p class="subtitle">Administra pedidos, clientes, compras rápidas y consulta el tiempo estimado del viaje desde un solo sitio.</p>
+    </div>
+</section>
+
+<section class="stats-grid">
+    <article class="stat-card">
+        <p class="stat-title">Clientes</p>
+        <p class="stat-value">{{ total_clientes }}</p>
+    </article>
+    <article class="stat-card">
+        <p class="stat-title">Pedidos registrados</p>
+        <p class="stat-value">{{ total_pedidos }}</p>
+    </article>
+    <article class="stat-card">
+        <p class="stat-title">Productos</p>
+        <p class="stat-value">{{ total_productos }}</p>
+    </article>
+    <article class="stat-card">
+        <p class="stat-title">Tiempo promedio (horas)</p>
+        <p class="stat-value">{{ promedio_tiempo|default:'N/A' }}</p>
+    </article>
+</section>
+
+<section class="dashboard-grid">
+    <div class="card card-panel">
+        <div class="card-header">
+            <h2>Pedidos recientes</h2>
+            <p>Revisa los últimos pedidos registrados y el vehículo recomendado para la carga.</p>
+        </div>
+        <div class="table-wrapper">
+            <table class="table-dashboard">
+                <thead>
+                    <tr>
+                        <th># Pedido</th>
+                        <th>Cliente</th>
+                        <th>Origen</th>
+                        <th>Destino</th>
+                        <th>Tipo carga</th>
+                        <th>Vehículo</th>
+                        <th>Tiempo estimado</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for pedido in pedidos %}
+                    <tr>
+                        <td><a href="{% url 'tienda:detalle_pedido' pedido.pk %}">#{{ pedido.pk }}</a></td>
+                        <td>{{ pedido.cliente.nombre }}</td>
+                        <td>{{ pedido.origen|default:'-' }}</td>
+                        <td>{{ pedido.destino|default:'-' }}</td>
+                        <td>{{ pedido.tipo_carga|default:'-' }}</td>
+                        <td>{{ pedido.vehiculo_asignado }}</td>
+                        <td>{{ pedido.tiempo_estimado|default:'Pendiente' }}</td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="7">No hay pedidos recientes.</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="card card-panel">
+        <div class="card-header">
+            <h2>Compra rápida</h2>
+            <p>Registra lo que quiere comprar un usuario en un solo paso.</p>
+        </div>
+        {% if registro_pedido_exitoso %}
+            <div class="alert success">Pedido registrado correctamente.</div>
+        {% endif %}
+        <form method="post" class="form-grid">
+            {% csrf_token %}
+            <input type="hidden" name="action" value="registrar_compra" />
+            <div class="form-row">{{ pedido_compra_form.cliente.label_tag }}{{ pedido_compra_form.cliente }}</div>
+            <div class="form-row">{{ pedido_compra_form.producto.label_tag }}{{ pedido_compra_form.producto }}</div>
+            <div class="form-row">{{ pedido_compra_form.cantidad.label_tag }}{{ pedido_compra_form.cantidad }}</div>
+            <div class="form-row">{{ pedido_compra_form.origen.label_tag }}{{ pedido_compra_form.origen }}</div>
+            <div class="form-row">{{ pedido_compra_form.destino.label_tag }}{{ pedido_compra_form.destino }}</div>
+            <div class="form-row">{{ pedido_compra_form.tipo_carga.label_tag }}{{ pedido_compra_form.tipo_carga }}</div>
+            <div class="form-row">{{ pedido_compra_form.peso_kg.label_tag }}{{ pedido_compra_form.peso_kg }}</div>
+            <button class="btn primary" type="submit">Registrar compra</button>
+        </form>
+    </div>
+</section>
+
+<section class="dashboard-grid">
+    <div class="card card-panel">
+        <div class="card-header">
+            <h2>Registro de usuarios</h2>
+            <p>Añade nuevos clientes y haz seguimiento inmediato.</p>
+        </div>
+        {% if registro_cliente_exitoso %}
+            <div class="alert success">Usuario registrado correctamente.</div>
+        {% endif %}
+        <form method="post" class="form-grid">
+            {% csrf_token %}
+            <input type="hidden" name="action" value="registrar_cliente" />
+            <div class="form-row">{{ cliente_form.nombre.label_tag }}{{ cliente_form.nombre }}</div>
+            <div class="form-row">{{ cliente_form.email.label_tag }}{{ cliente_form.email }}</div>
+            <button class="btn primary" type="submit">Registrar usuario</button>
+        </form>
+    </div>
+
+    <div class="card card-panel">
+        <div class="card-header">
+            <h2>Consulta de tiempo estimado</h2>
+            <p>Calcula el tiempo de viaje antes de confirmar el pedido.</p>
+        </div>
+        <form method="post" class="form-grid">
+            {% csrf_token %}
+            <input type="hidden" name="action" value="consultar_tiempo" />
+            <div class="form-row">{{ viaje_form.origen.label_tag }}{{ viaje_form.origen }}</div>
+            <div class="form-row">{{ viaje_form.destino.label_tag }}{{ viaje_form.destino }}</div>
+            <div class="form-row">{{ viaje_form.tipo_carga.label_tag }}{{ viaje_form.tipo_carga }}</div>
+            <div class="form-row">{{ viaje_form.peso_kg.label_tag }}{{ viaje_form.peso_kg }}</div>
+            <button class="btn primary" type="submit">Calcular tiempo</button>
+        </form>
+        {% if tiempo_estimado is not None %}
+            <div class="alert info">Tiempo estimado: <strong>{{ tiempo_estimado }} horas</strong></div>
+        {% endif %}
+    </div>
+</section>
+
+<section class="card card-panel full-width">
+    <div class="card-header">
+        <h2>Listado de usuarios</h2>
+        <p>Clientes registrados en el sistema.</p>
+    </div>
+    <div class="table-wrapper">
+        <table class="table-dashboard">
+            <thead>
+                <tr>
+                    <th>Nombre</th>
+                    <th>Email</th>
+                    <th>Registro</th>
+                    <th>Activo</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for cliente in clientes %}
+                <tr>
+                    <td><a href="{% url 'tienda:detalle_cliente' cliente.pk %}">{{ cliente.nombre }}</a></td>
+                    <td>{{ cliente.email }}</td>
+                    <td>{{ cliente.fecha_regitro|date:'d M Y H:i' }}</td>
+                    <td>{{ cliente.activo|yesno:'Sí,No' }}</td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="4">No hay usuarios registrados.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</section>
+
+{% if opciones.origenes %}
+<datalist id="origenes_list">
+    {% for item in opciones.origenes %}
+        <option value="{{ item }}"></option>
+    {% endfor %}
+</datalist>
+{% endif %}
+
+{% if opciones.destinos %}
+<datalist id="destinos_list">
+    {% for item in opciones.destinos %}
+        <option value="{{ item }}"></option>
+    {% endfor %}
+</datalist>
+{% endif %}
+
+{% endblock %}

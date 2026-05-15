@@ -25,5 +25,21 @@
 
         <button class="btn primary">Actualizar</button>
         <a class="btn primary" href="{% url 'tienda:detalle_pedido' pedido.pk %}">Volver</a>
+
+        {% if opciones.origenes %}
+            <datalist id="origenes_list">
+                {% for item in opciones.origenes %}
+                    <option value="{{ item }}"></option>
+                {% endfor %}
+            </datalist>
+        {% endif %}
+
+        {% if opciones.destinos %}
+            <datalist id="destinos_list">
+                {% for item in opciones.destinos %}
+                    <option value="{{ item }}"></option>
+                {% endfor %}
+            </datalist>
+        {% endif %}
     </form>
 {% endblock %}

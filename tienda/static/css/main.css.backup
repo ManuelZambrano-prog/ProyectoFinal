@@ -1,83 +1,62 @@
 body {
-    --bg: #070707;
-    --surface: #0f0f0f;
-    --surface-soft: #1a1a1a;
-    --surface-light: #ffffff;
-    --text: #f8f8f8;
-    --text-muted: #d1d1d1;
-    --accent: #f6c518;
-    --accent-strong: #ffd54f;
-    --border: #2f2f2f;
-
     font-family: 'Segoe UI', sans-serif;
     margin: 20px;
-    background-color: var(--bg);
-    color: var(--text);
+    background-color: #ffffff;
+    color: #1f2532;
 }
 
 h1 {
-    color: var(--accent);
-}
-
-nav {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 10px;
-    margin-bottom: 20px;
-    padding: 16px 0;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    color: #1e40af;
 }
 
 nav a {
     margin-right: 10px;
     text-decoration: none;
-    color: var(--text);
+    color: #374151;
 }
 
 nav a:hover {
-    color: var(--accent-strong);
+    text-decoration: underline;
 }
 
 .btn {
     display: inline-block;
-    padding: 10px 18px;
+    padding: 8px 16px;
     margin: 5px 0;
-    color: var(--text);
+    color: #ffffff;
     text-decoration: none;
     border-radius: 9999px;
     font-weight: 500;
-    transition: background 0.3s, transform 0.2s, color 0.2s;
-    background-color: var(--surface);
-    border: 1px solid var(--border);
+    transition: background 0.3s, transform 0.2s;
+    background-color: #1e40af;
+    border: 1px solid #1e40af;
 }
 
 .btn:hover {
-    background-color: var(--surface-soft);
-    transform: translateY(-1px);
+    background-color: #1e3a8a;
+    transform: translateY(-2px);
 }
 
 .primary {
-    background-color: var(--accent);
-    border-color: var(--accent);
-    color: #111111;
+    background-color: #1e40af;
+    border-color: #1e40af;
 }
 
 .primary:hover {
-    background-color: var(--accent-strong);
+    background-color: #1e3a8a;
 }
 
 .delete {
-    background-color: #b91c1c;
-    border-color: #b91c1c;
+    background-color: #dc2626;
+    border-color: #dc2626;
 }
 
 .delete:hover {
-    background-color: #8b1620;
+    background-color: #b91c1c;
 }
 
 .item{
-    border: 1px solid rgba(0, 0, 0, 0.12);
-    background: #ffffff;
+    border: 1px solid #e2e8f0;
     padding: 10px;
     margin-bottom: 10px;
 }
@@ -155,15 +134,15 @@ nav a:hover {
 
 .stat-card,
 .card {
-    background: var(--surface-light);
-    border: 1px solid rgba(0, 0, 0, 0.08);
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
     border-radius: 18px;
-    box-shadow: 0 16px 40px rgba(0, 0, 0, 0.08);
+    box-shadow: 0 16px 40px rgba(30, 64, 175, 0.05);
     padding: 22px;
 }
 
 .stat-title {
-    color: #4b5563;
+    color: #6b7280;
     font-size: 0.95rem;
     margin-bottom: 10px;
 }
@@ -171,7 +150,7 @@ nav a:hover {
 .stat-value {
     font-size: 2.4rem;
     font-weight: 700;
-    color: #111111;
+    color: #1e40af;
 }
 
 .dashboard-grid {
@@ -216,13 +195,13 @@ nav a:hover {
 }
 
 .table-dashboard th {
-    color: #111111;
+    color: #374151;
     font-weight: 600;
     font-size: 0.95rem;
 }
 
 .table-dashboard tbody tr:hover {
-    background: #fdf8dc;
+    background: #f9fafb;
 }
 
 .form-grid {
@@ -237,7 +216,7 @@ nav a:hover {
 
 .form-row label {
     font-weight: 600;
-    color: #111111;
+    color: #374151;
 }
 
 .form-row input,
@@ -245,10 +224,10 @@ nav a:hover {
 .form-row textarea {
     width: 100%;
     padding: 12px 14px;
-    border: 1px solid var(--border);
+    border: 1px solid #d1d5db;
     border-radius: 14px;
-    background: #ffffff;
-    color: #111111;
+    background: #fafbfc;
+    color: #1f2532;
     font-size: 0.98rem;
 }
 
@@ -256,8 +235,8 @@ nav a:hover {
 .form-row select:focus,
 .form-row textarea:focus {
     outline: none;
-    border-color: var(--accent);
-    box-shadow: 0 0 0 3px rgba(246, 197, 24, 0.18);
+    border-color: #1e40af;
+    box-shadow: 0 0 0 3px rgba(30, 64, 175, 0.1);
 }
 
 .alert {
@@ -268,15 +247,15 @@ nav a:hover {
 }
 
 .alert.success {
-    color: #0f172a;
-    background: #fef9c3;
-    border-color: #facc15;
+    color: #065f46;
+    background: #ecfdf5;
+    border-color: #d1fae5;
 }
 
 .alert.info {
-    color: #111111;
-    background: #fef3c7;
-    border-color: #f59e0b;
+    color: #1e40af;
+    background: #eff6ff;
+    border-color: #bfdbfe;
 }
 
 .full-width {

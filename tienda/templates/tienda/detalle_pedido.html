@@ -6,6 +6,11 @@
 <p><b>Cliente:</b>{{ pedido.cliente.nombre }}</p>
 <p><b>Fecha:</b>{{ pedido.fecha|date:"d/m/Y H:i" }}</p>
 <p><b>Estado:</b>{{ pedido.estado }}</p>
+<p><b>Origen:</b> {{ pedido.origen|default:"-" }}</p>
+<p><b>Destino:</b> {{ pedido.destino|default:"-" }}</p>
+<p><b>Tipo de carga:</b> {{ pedido.tipo_carga|default:"-" }}</p>
+<p><b>Peso:</b> {{ pedido.peso_kg|default:"0" }} kg</p>
+<p><b>Tiempo estimado de llegada:</b> {% if pedido.tiempo_estimado %} {{ pedido.tiempo_estimado }} horas {% else %} No disponible {% endif %}</p>
 
 <h3>Productos</h3>
 <p>

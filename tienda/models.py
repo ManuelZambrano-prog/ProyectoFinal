@@ -28,7 +28,12 @@ class Pedido(models.Model):
 
     cliente = models.ForeignKey(Cliente, on_delete=models.CASCADE, related_name="pedidos")
     fecha = models.DateTimeField(auto_now_add=True)
-    estado = models.CharField(max_length=7, choices=ESTADOS ,default="CREADO")
+    estado = models.CharField(max_length=7, choices=ESTADOS, default="CREADO")
+    origen = models.CharField(max_length=200, blank=True, default="", verbose_name="Ciudad de origen")
+    destino = models.CharField(max_length=200, blank=True, default="", verbose_name="Ciudad de destino")
+    tipo_carga = models.CharField(max_length=100, blank=True, default="", verbose_name="Tipo de carga")
+    peso_kg = models.DecimalField(max_digits=8, decimal_places=2, default=0, verbose_name="Peso (kg)")
+    tiempo_estimado = models.DecimalField(max_digits=6, decimal_places=2, blank=True, null=True, verbose_name="Tiempo estimado (horas)")
 
     def __str__(self):
         return f"Pedido #{self.pk} - {self.cliente.nombre} ({self.estado})"
@@ -42,6 +47,17 @@ class Pedido(models.Model):
         """Suma del precio total (cantidad * precio_unitario) de todos los items"""
         resultado = self.items.aggregate(total=Sum(F('cantidad') * F('precio_unitario')))['total']
         return resultado if resultado is not None else 0
+
+    @property
+    def vehiculo_asignado(self):
+        peso = float(self.peso_kg or 0)
+        if self.tipo_carga and "peligrosa" in self.tipo_carga.lower():
+            return "Tráiler especializado"
+        if peso <= 500:
+            return "Camión liviano"
+        if peso <= 2000:
+            return "Camión mediano"
+        return "Camión pesado"
 
 class PedidoItem(models.Model):
     pedido = models.ForeignKey(Pedido, on_delete=models.CASCADE, related_name="items")

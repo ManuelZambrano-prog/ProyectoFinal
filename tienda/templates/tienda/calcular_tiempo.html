@@ -1,0 +1,39 @@
+{% extends "tienda/base.html" %}
+
+{% block title %}Calcular tiempo de viaje{% endblock %}
+
+{% block content %}
+<h1>Consultar tiempo de viaje</h1>
+<p>Completa los datos de origen, destino, tipo de carga y peso para estimar el tiempo de llegada.</p>
+<form method="post">
+    {% csrf_token %}
+    <fieldset>
+        <legend>Datos del viaje</legend>
+        {{ form.as_p }}
+    </fieldset>
+    <button class="btn primary" type="submit">Calcular tiempo</button>
+</form>
+
+{% if opciones.origenes %}
+    <datalist id="origenes_list">
+        {% for item in opciones.origenes %}
+            <option value="{{ item }}"></option>
+        {% endfor %}
+    </datalist>
+{% endif %}
+
+{% if opciones.destinos %}
+    <datalist id="destinos_list">
+        {% for item in opciones.destinos %}
+            <option value="{{ item }}"></option>
+        {% endfor %}
+    </datalist>
+{% endif %}
+
+{% if tiempo is not None %}
+    <section class="resultado">
+        <h2>Tiempo estimado</h2>
+        <p>El tiempo esperado de viaje es <strong>{{ tiempo }} horas</strong>.</p>
+    </section>
+{% endif %}
+{% endblock %}
