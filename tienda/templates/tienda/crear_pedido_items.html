@@ -2,27 +2,18 @@
 {% block title %} Nuevo Pedido {% endblock %}
 {% block content %}
 <h1>Nuevo Pedido</h1>
-<form method="post">
+<form method="post" id="pedido-form">
     {% csrf_token %}
     <fieldset>
         <legend>Datos del Pedido</legend>
-        {{ pedido_form.as_p }}
+        <p>{{ pedido_form.cliente.label_tag }} {{ pedido_form.cliente }}</p>
+        <p>{{ pedido_form.estado.label_tag }} {{ pedido_form.estado }}</p>
+        <p>{{ pedido_form.origen.label_tag }} {{ pedido_form.origen }}</p>
+        <p>{{ pedido_form.destino.label_tag }} {{ pedido_form.destino }}</p>
+        <p>{{ pedido_form.peso_kg.label_tag }} {{ pedido_form.peso_kg }}</p>
+        <p>{{ pedido_form.tipo_carga.label_tag }} {{ pedido_form.tipo_carga }}</p>
     </fieldset>
-
-    <fieldset>
-        <legend>Items</legend>
-        {{ formset.management_form }}
-        {{ formset.non_form_errors }}
-        {% for form in formset %}
-            <div class="pedido-item-form">
-                {{ form.as_p }}
-                {% if form.instance.pk %}
-                    <label> {{ form.DELETE }}</label>
-                {% endif %}
-            </div>
-        {% endfor %}
-    </fieldset>
-
+    
     <button class="btn" type="submit">Guardar</button>
     <a href="{% url 'tienda:lista_pedidos' %}">Cancelar</a>
 
@@ -41,5 +32,70 @@
             {% endfor %}
         </datalist>
     {% endif %}
+
+    <div id="recomendacion" style="margin-top:1em">
+        <strong>Recomendación:</strong>
+        <p>Tipo de carga sugerido: <span id="rec-tipo">-</span></p>
+        <p>Vehículo sugerido: <span id="rec-vehiculo">-</span></p>
+    </div>
 </form>
+
+<script>
+(function(){
+    const pesoInput = document.querySelector('[name="peso_kg"]');
+    const origenInput = document.querySelector('[name="origen"]');
+    const destinoInput = document.querySelector('[name="destino"]');
+    const tipoField = document.querySelector('[name="tipo_carga"]');
+    const recTipo = document.getElementById('rec-tipo');
+    const recVeh = document.getElementById('rec-vehiculo');
+    const form = document.getElementById('pedido-form');
+    let timeout = null;
+
+    function getCSRF(){
+        const el = document.querySelector('[name="csrfmiddlewaretoken"]');
+        return el ? el.value : '';
+    }
+
+    function solicitarRecomendacion(){
+        const peso = pesoInput ? pesoInput.value : '';
+        const origen = origenInput ? origenInput.value : '';
+        const destino = destinoInput ? destinoInput.value : '';
+        const csrf = getCSRF();
+        if(!peso) return;
+
+        const data = new URLSearchParams();
+        data.append('peso_kg', peso);
+        data.append('origen', origen);
+        data.append('destino', destino);
+        data.append('csrfmiddlewaretoken', csrf);
+
+        fetch('{% url "tienda:recomendar_carga" %}', {
+            method: 'POST',
+            headers: {
+                'Accept': 'application/json',
+            },
+            body: data
+        }).then(r=>r.json()).then(js=>{
+            if(js.tipo_carga){
+                recTipo.textContent = js.tipo_carga;
+                // si es select, intentar asignar el valor
+                if(tipoField){
+                    try{ tipoField.value = js.tipo_carga; }catch(e){}
+                }
+            }
+            if(js.vehiculo){ recVeh.textContent = js.vehiculo; }
+        }).catch(err=>{
+            console.error('Error recomendación', err);
+        });
+    }
+
+    if(pesoInput){
+        pesoInput.addEventListener('input', ()=>{
+            clearTimeout(timeout);
+            timeout = setTimeout(solicitarRecomendacion, 600);
+        });
+    }
+})();
+</script>
+
 {% endblock %}

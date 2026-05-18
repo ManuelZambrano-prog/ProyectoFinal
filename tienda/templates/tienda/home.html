@@ -21,10 +21,6 @@
         <p class="stat-value">{{ total_pedidos }}</p>
     </article>
     <article class="stat-card">
-        <p class="stat-title">Productos</p>
-        <p class="stat-value">{{ total_productos }}</p>
-    </article>
-    <article class="stat-card">
         <p class="stat-title">Tiempo promedio (horas)</p>
         <p class="stat-value">{{ promedio_tiempo|default:'N/A' }}</p>
     </article>
@@ -70,27 +66,6 @@
         </div>
     </div>
 
-    <div class="card card-panel">
-        <div class="card-header">
-            <h2>Compra rápida</h2>
-            <p>Registra lo que quiere comprar un usuario en un solo paso.</p>
-        </div>
-        {% if registro_pedido_exitoso %}
-            <div class="alert success">Pedido registrado correctamente.</div>
-        {% endif %}
-        <form method="post" class="form-grid">
-            {% csrf_token %}
-            <input type="hidden" name="action" value="registrar_compra" />
-            <div class="form-row">{{ pedido_compra_form.cliente.label_tag }}{{ pedido_compra_form.cliente }}</div>
-            <div class="form-row">{{ pedido_compra_form.producto.label_tag }}{{ pedido_compra_form.producto }}</div>
-            <div class="form-row">{{ pedido_compra_form.cantidad.label_tag }}{{ pedido_compra_form.cantidad }}</div>
-            <div class="form-row">{{ pedido_compra_form.origen.label_tag }}{{ pedido_compra_form.origen }}</div>
-            <div class="form-row">{{ pedido_compra_form.destino.label_tag }}{{ pedido_compra_form.destino }}</div>
-            <div class="form-row">{{ pedido_compra_form.tipo_carga.label_tag }}{{ pedido_compra_form.tipo_carga }}</div>
-            <div class="form-row">{{ pedido_compra_form.peso_kg.label_tag }}{{ pedido_compra_form.peso_kg }}</div>
-            <button class="btn primary" type="submit">Registrar compra</button>
-        </form>
-    </div>
 </section>
 
 <section class="dashboard-grid">
@@ -121,8 +96,8 @@
             <input type="hidden" name="action" value="consultar_tiempo" />
             <div class="form-row">{{ viaje_form.origen.label_tag }}{{ viaje_form.origen }}</div>
             <div class="form-row">{{ viaje_form.destino.label_tag }}{{ viaje_form.destino }}</div>
-            <div class="form-row">{{ viaje_form.tipo_carga.label_tag }}{{ viaje_form.tipo_carga }}</div>
             <div class="form-row">{{ viaje_form.peso_kg.label_tag }}{{ viaje_form.peso_kg }}</div>
+            <div class="form-row">{{ viaje_form.tipo_carga.label_tag }}{{ viaje_form.tipo_carga }}</div>
             <button class="btn primary" type="submit">Calcular tiempo</button>
         </form>
         {% if tiempo_estimado is not None %}

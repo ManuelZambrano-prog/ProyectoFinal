@@ -11,45 +11,8 @@
 <p><b>Tipo de carga:</b> {{ pedido.tipo_carga|default:"-" }}</p>
 <p><b>Peso:</b> {{ pedido.peso_kg|default:"0" }} kg</p>
 <p><b>Tiempo estimado de llegada:</b> {% if pedido.tiempo_estimado %} {{ pedido.tiempo_estimado }} horas {% else %} No disponible {% endif %}</p>
-
-<h3>Productos</h3>
-<p>
-    <a href="{% url 'tienda:eliminar_pedido' pedido.pk %}" class="btn delete">Eliminar pedido</a>
-</p>
-{% if items %}
-    <table>
-        <thead>
-            <tr>
-                <th class="encabezado">Producto</th>
-                <th class="encabezado">Cantidad</th>
-                <th class="encabezado">Precio Unitario</th>
-                <th class="encabezado">Subtotal</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for it in items %}
-                <tr>
-                    <td>{{ it.producto.nombre }}</td>
-                    <td>{{ it.cantidad }}</td>
-                    <td>${{ it.precio_unitario|floatformat:2 }}</td>
-                    <td>${{ it.line_total|floatformat:2 }}</td>
-                </tr>
-            {% empty %}
-                <tr>
-                    <td colspan="4">Este pedido no tiene ítems.</td>
-                </tr>
-            {% endfor %}
-        </tbody>
-        <tfoot>
-            <tr>
-                <td colspan="3" class="total">Total a pagar:</td>
-                <td class="total">${{ total_pedido|floatformat:2 }}</td>
-            </tr>
-        </tfoot>
-    </table>
-{% else %}
-    <p>Este pedido a+un no tiene ítems.</p>
-{% endif %}
+<p><b>Tiempo estimado de espera en cargue:</b> {% if espera_carga %} {{ espera_carga }} horas {% else %} No disponible {% endif %}</p>
+<p><b>Tiempo estimado de espera en descargue:</b> {% if espera_descarga %} {{ espera_descarga }} horas {% else %} No disponible {% endif %}</p>
 
 <p>
     <a href ="{% url 'tienda:editar_pedido_items' pedido.pk %}" class="btn primary">

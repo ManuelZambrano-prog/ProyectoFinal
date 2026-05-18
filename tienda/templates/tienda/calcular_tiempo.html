@@ -34,6 +34,12 @@
     <section class="resultado">
         <h2>Tiempo estimado</h2>
         <p>El tiempo esperado de viaje es <strong>{{ tiempo }} horas</strong>.</p>
+        {% if espera_carga is not None %}
+            <p>Tiempo estimado de espera en cargue: <strong>{{ espera_carga }} horas</strong>.</p>
+        {% endif %}
+        {% if espera_descarga is not None %}
+            <p>Tiempo estimado de espera en descargue: <strong>{{ espera_descarga }} horas</strong>.</p>
+        {% endif %}
     </section>
 {% endif %}
 {% endblock %}

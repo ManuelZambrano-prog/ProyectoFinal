@@ -1,31 +1,7 @@
 from django import forms
 from django.forms import inlineformset_factory
-from.models import Producto, Cliente, Pedido, PedidoItem
+from .models import Cliente, Pedido, PedidoItem
 
-class ProductoForm(forms.ModelForm):
-    class Meta:
-        model = Producto
-        fields = ["nombre", "descripcion", "precio"]
-        widgets = {
-            "nombre": forms.TextInput(attrs={
-                "placeholder": "Nombre del Producto"
-            }),
-            "descripcion" : forms.Textarea(attrs={
-                "rows": 4,
-                "placeholder": "Descripción breve"
-            }),
-            "precio": forms.NumberInput(attrs={
-                "step": "0.01",
-                "min": "0"
-            }),
-        }
-    
-    def clean_precio(self):
-        # Si el precio es negativo o cero, se lanza una excepción
-        precio = self.cleaned_data.get("precio")
-        if precio is not None and precio <= 0:
-            raise forms.ValidationError("El precio debe ser mayor que cero.")
-        return precio
     
 
 
@@ -50,7 +26,8 @@ class PedidoSimpleForm(forms.ModelForm):
 
     class Meta:
         model = Pedido
-        fields = ["cliente", "estado", "origen", "destino", "tipo_carga", "peso_kg"]
+        # Mover `tipo_carga` al final para que el peso venga antes
+        fields = ["cliente", "estado", "origen", "destino", "peso_kg", "tipo_carga"]
         widgets = {
             "origen": forms.TextInput(attrs={
                 "placeholder": "Ciudad de origen"
@@ -119,7 +96,6 @@ class ViajeForm(forms.Form):
             "placeholder": "Ciudad de destino"
         }),
     )
-    tipo_carga = forms.ChoiceField(choices=[], required=True)
     peso_kg = forms.DecimalField(
         min_value=0.01,
         decimal_places=2,
@@ -129,6 +105,7 @@ class ViajeForm(forms.Form):
             "step": "0.01"
         }),
     )
+    tipo_carga = forms.ChoiceField(choices=[], required=True)
 
     def __init__(self, *args, **kwargs):
         opciones = kwargs.pop("opciones", None)
@@ -169,51 +146,6 @@ class PedidoItemsForm(forms.ModelForm):
             "cantidad": forms.NumberInput(attrs={"min": "1","step": "1"}),
             "precio_unitario": forms.NumberInput(attrs={"min": "0","step": "0.01"}),
         }
-
-class PedidoCompraRapidaForm(forms.Form):
-    cliente = forms.ModelChoiceField(queryset=Cliente.objects.all(), required=True)
-    producto = forms.ModelChoiceField(queryset=Producto.objects.all(), required=True)
-    cantidad = forms.IntegerField(min_value=1, initial=1)
-    origen = forms.CharField(required=True)
-    destino = forms.CharField(required=True)
-    tipo_carga = forms.CharField(required=True)
-    peso_kg = forms.DecimalField(min_value=0.01, decimal_places=2, max_digits=8)
-
-    def __init__(self, *args, **kwargs):
-        opciones = kwargs.pop("opciones", None)
-        productos = kwargs.pop("productos", None)
-        super().__init__(*args, **kwargs)
-
-        if productos is not None:
-            self.fields["producto"].queryset = productos
-
-        if opciones is not None:
-            tipos = opciones.get("tipos_carga", [])
-            if tipos:
-                self.fields["tipo_carga"] = forms.ChoiceField(
-                    choices=[("", "Selecciona el tipo de carga")] + [(item, item) for item in tipos],
-                    required=True,
-                )
-            self.fields["origen"] = forms.CharField(
-                widget=forms.TextInput(attrs={
-                    "placeholder": "Ciudad de origen",
-                    "list": "origenes_list"
-                }),
-                required=True,
-            )
-            self.fields["destino"] = forms.CharField(
-                widget=forms.TextInput(attrs={
-                    "placeholder": "Ciudad de destino",
-                    "list": "destinos_list"
-                }),
-                required=True,
-            )
-
-    def clean_peso_kg(self):
-        peso = self.cleaned_data.get("peso_kg")
-        if peso is not None and peso <= 0:
-            raise forms.ValidationError("El peso debe ser mayor que cero.")
-        return peso
 
 PedidoItemFormSet = inlineformset_factory(
     parent_model=Pedido,
