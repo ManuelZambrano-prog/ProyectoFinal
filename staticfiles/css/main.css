@@ -1,13 +1,13 @@
 body {
-    --bg: #070707;
-    --surface: #0f0f0f;
-    --surface-soft: #1a1a1a;
+    --bg: #f4f4f4;
+    --surface: #ffffff;
+    --surface-soft: #f8f8f8;
     --surface-light: #ffffff;
-    --text: #f8f8f8;
-    --text-muted: #d1d1d1;
-    --accent: #f6c518;
-    --accent-strong: #ffd54f;
-    --border: #2f2f2f;
+    --text: #111111;
+    --text-muted: #4b5563;
+    --accent: #16a34a;
+    --accent-strong: #22c55e;
+    --border: #d1d5db;
 
     font-family: 'Segoe UI', sans-serif;
     margin: 0;
@@ -18,6 +18,19 @@ body {
 
 h1 {
     color: var(--accent);
+}
+
+.dashboard-header {
+    background: var(--surface-soft);
+    color: var(--text);
+    border-radius: 24px;
+    padding: 24px;
+    margin-bottom: 24px;
+}
+
+.dashboard-header p,
+.dashboard-header .eyebrow {
+    color: var(--text);
 }
 
 nav {
@@ -50,11 +63,12 @@ nav {
 .primary {
     background-color: var(--accent);
     border-color: var(--accent);
-    color: #111111;
+    color: #ffffff;
 }
 
 .primary:hover {
     background-color: var(--accent-strong);
+    color: #ffffff;
 }
 
 .delete {
@@ -149,10 +163,10 @@ nav {
 }
 
 .card {
-    background: var(--surface-soft);
+    background: var(--surface-light);
     border: 1px solid var(--border);
     border-radius: 18px;
-    box-shadow: 0 16px 40px rgba(0, 0, 0, 0.3);
+    box-shadow: 0 16px 40px rgba(15, 23, 42, 0.08);
     padding: 22px;
 }
 
@@ -184,6 +198,19 @@ nav {
     color: var(--accent);
 }
 
+.sidebar-header .logo,
+.nav-btn {
+    color: #f8fafc;
+}
+
+.nav-btn:hover {
+    background-color: transparent;
+    border-color: transparent;
+    color: #ffffff;
+    box-shadow: inset 4px 0 0 0 #4ade80;
+    transform: translateX(4px);
+}
+
 .dashboard-grid {
     display: grid;
     gap: 24px;
@@ -211,13 +238,15 @@ nav {
     justify-self: center;
 }
 
-/* Ensure the consulta card centers within its column */
+/* Ensure the consulta card sits slightly left within its column */
 .dashboard-grid > .card.card-consulta {
     max-width: 520px;
-    justify-self: center;
+    justify-self: start;
+    position: relative;
+    left: -144px;
 }
 
-/* Prevent cards from stretching full-width so justify-self:center works */
+/* Prevent cards from stretching full-width so justify-self works */
 .dashboard-grid > .card.card-register,
 .dashboard-grid > .card.card-consulta {
     display: inline-block;
@@ -314,7 +343,59 @@ nav {
 .form-row textarea:focus {
     outline: none;
     border-color: var(--accent);
-    box-shadow: 0 0 0 3px rgba(246, 197, 24, 0.18);
+    box-shadow: 0 0 0 3px rgba(22, 163, 74, 0.18);
+}
+
+.travel-page {
+    max-width: 760px;
+    margin: 0 auto;
+}
+
+.travel-card {
+    border: 1px solid var(--border);
+    box-shadow: 0 24px 48px rgba(15, 23, 42, 0.08);
+}
+
+.travel-card .card-header h1 {
+    margin-bottom: 10px;
+    font-size: 2rem;
+}
+
+.travel-card .card-header p {
+    margin: 0;
+    color: var(--text-muted);
+    line-height: 1.7;
+}
+
+.travel-fieldset {
+    border: 1px solid var(--border);
+    border-radius: 18px;
+    padding: 24px;
+    background: var(--surface-soft);
+}
+
+.travel-fieldset legend {
+    font-weight: 700;
+    color: var(--accent);
+    padding: 0 10px;
+}
+
+.result-card {
+    margin-top: 24px;
+    padding: 22px;
+    background: #ecfdf5;
+    border: 1px solid #bbf7d0;
+    border-radius: 18px;
+}
+
+.result-card h2 {
+    margin-top: 0;
+    color: var(--accent);
+}
+
+.result-card p {
+    color: var(--text);
+    margin: 12px 0;
 }
 
 .alert {
@@ -354,14 +435,15 @@ nav {
     min-height: 100vh;
 }
 
+
 .sidebar {
     position: fixed;
     left: 0;
     top: 0;
     width: 260px;
     height: 100vh;
-    background: var(--surface-soft);
-    border-right: 1px solid var(--border);
+    background: #1a1a1a;
+    border-right: 1px solid #334155;
     display: flex;
     flex-direction: column;
     padding: 0;
@@ -371,14 +453,14 @@ nav {
 
 .sidebar-header {
     padding: 24px 16px;
-    border-bottom: 1px solid var(--border);
+    border-bottom: 1px solid rgba(255,255,255,0.06);
 }
 
 .sidebar-header .logo {
     margin: 0;
     font-size: 1.5rem;
     font-weight: 700;
-    color: var(--accent);
+    color: #f8fafc;
     letter-spacing: 1px;
 }
 
@@ -398,16 +480,17 @@ nav {
     border-radius: 12px;
     background-color: transparent;
     border: 1px solid transparent;
-    color: var(--text);
+    color: #f8fafc;
     text-decoration: none;
     font-weight: 500;
     transition: all 0.3s ease;
 }
 
 .nav-btn:hover {
-    background-color: var(--surface);
-    border-color: var(--accent);
-    color: var(--accent-strong);
+    background-color: transparent;
+    border-color: transparent;
+    color: #ffffff;
+    box-shadow: inset 4px 0 0 0 #4ade80;
     transform: translateX(4px);
 }
 
