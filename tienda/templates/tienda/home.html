@@ -14,19 +14,19 @@
 <section class="stats-grid">
     <article class="stat-card">
         <p class="stat-title">Clientes</p>
-        <p class="stat-value">{{ total_clientes }}</p>
+        <p class="stat-value">{{ total_clientes|floatformat:0 }}</p>
     </article>
     <article class="stat-card">
         <p class="stat-title">Pedidos registrados</p>
-        <p class="stat-value">{{ total_pedidos }}</p>
+        <p class="stat-value">{{ total_pedidos|floatformat:0 }}</p>
     </article>
     <article class="stat-card">
         <p class="stat-title">Tiempo promedio (horas)</p>
-        <p class="stat-value">{{ promedio_tiempo|default:'N/A' }}</p>
+        <p class="stat-value">{{ promedio_tiempo|floatformat:0|default:'N/A' }}</p>
     </article>
 </section>
 
-<section class="dashboard-grid">
+<section class="dashboard-grid dashboard-main">
     <div class="card card-panel">
         <div class="card-header">
             <h2>Pedidos recientes</h2>
@@ -54,7 +54,7 @@
                         <td>{{ pedido.destino|default:'-' }}</td>
                         <td>{{ pedido.tipo_carga|default:'-' }}</td>
                         <td>{{ pedido.vehiculo_asignado }}</td>
-                        <td>{{ pedido.tiempo_estimado|default:'Pendiente' }}</td>
+                        <td>{{ pedido.tiempo_estimado|floatformat:0|default:'Pendiente' }}</td>
                     </tr>
                     {% empty %}
                     <tr>
@@ -69,7 +69,7 @@
 </section>
 
 <section class="dashboard-grid">
-    <div class="card card-panel">
+    <div class="card card-panel card-register">
         <div class="card-header">
             <h2>Registro de usuarios</h2>
             <p>Añade nuevos clientes y haz seguimiento inmediato.</p>
@@ -86,7 +86,7 @@
         </form>
     </div>
 
-    <div class="card card-panel">
+    <div class="card card-panel card-consulta">
         <div class="card-header">
             <h2>Consulta de tiempo estimado</h2>
             <p>Calcula el tiempo de viaje antes de confirmar el pedido.</p>
@@ -101,7 +101,7 @@
             <button class="btn primary" type="submit">Calcular tiempo</button>
         </form>
         {% if tiempo_estimado is not None %}
-            <div class="alert info">Tiempo estimado: <strong>{{ tiempo_estimado }} horas</strong></div>
+            <div class="alert info">Tiempo estimado: <strong>{{ tiempo_estimado|floatformat:0 }} horas</strong></div>
         {% endif %}
     </div>
 </section>

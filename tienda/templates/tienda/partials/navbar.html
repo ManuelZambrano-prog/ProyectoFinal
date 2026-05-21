@@ -1,7 +1,11 @@
-<nav>
-    <a href="{% url 'tienda:home' %}" class="btn">Inicio</a>
-    <a href="{% url 'tienda:lista_pedidos' %}" class="btn">Pedidos</a>
-    <a href="{% url 'tienda:lista_clientes' %}" class="btn">Clientes</a>
-    <a href="{% url 'tienda:calcular_tiempo' %}" class="btn">Calcular tiempo</a>
+<nav class="sidebar">
+    <div class="sidebar-header">
+        <h1 class="logo">RUTAMAX EXPRESS</h1>
+    </div>
+    <div class="nav-links">
+        <a href="{% url 'tienda:home' %}" class="btn nav-btn">Inicio</a>
+        <a href="{% url 'tienda:lista_pedidos' %}" class="btn nav-btn">Pedidos</a>
+        <a href="{% url 'tienda:lista_clientes' %}" class="btn nav-btn">Clientes</a>
+        <a href="{% url 'tienda:calcular_tiempo' %}" class="btn nav-btn">Calcular tiempo</a>
+    </div>
 </nav>
-<hr>
