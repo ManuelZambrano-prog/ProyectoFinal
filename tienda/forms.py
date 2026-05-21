@@ -1,8 +1,5 @@
 from django import forms
-from django.forms import inlineformset_factory
-from .models import Cliente, Pedido, PedidoItem
-
-    
+from .models import Cliente, Pedido
 
 
 class ClienteForm(forms.ModelForm):
@@ -138,19 +135,3 @@ class ViajeForm(forms.Form):
         ]
 
 
-class PedidoItemsForm(forms.ModelForm):
-    class Meta:
-        model = PedidoItem
-        fields = ["producto", "cantidad", "precio_unitario"]
-        widgets = {
-            "cantidad": forms.NumberInput(attrs={"min": "1","step": "1"}),
-            "precio_unitario": forms.NumberInput(attrs={"min": "0","step": "0.01"}),
-        }
-
-PedidoItemFormSet = inlineformset_factory(
-    parent_model=Pedido,
-    model=PedidoItem,
-    form=PedidoItemsForm,
-    extra=1,  #cuantas filas "vacias" mostrar por defecto 
-    can_delete=True  # Permitir borrar filas existentes
-    )

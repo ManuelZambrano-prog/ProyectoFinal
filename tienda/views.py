@@ -2,11 +2,10 @@ from django.shortcuts import render, get_object_or_404, redirect
 from django.db import transaction
 from django.db.models import Avg
 from django.http import JsonResponse
-from .models import Producto, Cliente, Pedido, PedidoItem
+from .models import Cliente, Pedido
 from .forms import (
     ClienteForm,
     PedidoSimpleForm,
-    PedidoItemFormSet,
     ViajeForm,
 )
 from core.ia.tiempo_viaje.predictor import (
@@ -23,7 +22,8 @@ Vista de inicio
 def home(request):
     opciones = obtener_opciones()
     clientes = Cliente.objects.order_by("-fecha_regitro")[:6]
-    pedidos = Pedido.objects.select_related("cliente").order_by("-fecha")[:10]
+    # Excluir pedidos pendientes (estado CREADO) de la lista de "Pedidos recientes"
+    pedidos = Pedido.objects.select_related("cliente").exclude(estado="CREADO").order_by("-fecha")[:10]
 
     total_clientes = Cliente.objects.count()
     total_pedidos = Pedido.objects.count()
@@ -78,7 +78,7 @@ vista que lista los pedidos
 '''
 
 def lista_pedidos(request):
-    pedidos = Pedido.objects.select_related("cliente").prefetch_related("items").order_by("-fecha")
+    pedidos = Pedido.objects.select_related("cliente").order_by("-fecha")
     return render(request, "tienda/lista_pedidos.html", {"pedidos": pedidos})
 
 '''
@@ -87,14 +87,9 @@ vista de detalle del pedidos
 
 def detalle_pedido(request, pk):
     pedido = get_object_or_404(
-        Pedido.objects.select_related("cliente").prefetch_related("items__producto"),
+        Pedido.objects.select_related("cliente"),
         pk=pk
     )
-    items = pedido.items.all()
-    total_unidades = sum(it.cantidad for it in items)
-    total_pedido = sum(it.cantidad * it.precio_unitario for it in items)
-    for it in items:
-        it.line_total = it.cantidad * it.precio_unitario
     datos = {
         "origen": pedido.origen,
         "destino": pedido.destino,
@@ -106,9 +101,6 @@ def detalle_pedido(request, pk):
 
     return render(request, "tienda/detalle_pedido.html", {
         "pedido": pedido,
-        "items": items,
-        "total_unidades": total_unidades,
-        "total_pedido": total_pedido,
         "espera_carga": espera_carga,
         "espera_descarga": espera_descarga,
     })
@@ -123,7 +115,7 @@ def eliminar_pedido(request, pk):
     return render(request, "tienda/eliminar_pedido.html", {"pedido": pedido})
 
 '''
-Crear pedido con Items
+Crear pedido
 '''
 @transaction.atomic
 def crear_pedido_items(request):
@@ -200,8 +192,7 @@ def editar_pedido_items(request, pk):
 
     if request.method == "POST":
         pedido_form = PedidoSimpleForm(request.POST, instance=pedido, opciones=opciones)
-        formset = PedidoItemFormSet(request.POST, instance=pedido)
-        if pedido_form.is_valid() and formset.is_valid():
+        if pedido_form.is_valid():
             pedido = pedido_form.save(commit=False)
             pedido.tiempo_estimado = predecir_tiempo({
                 "origen": pedido.origen,
@@ -210,16 +201,13 @@ def editar_pedido_items(request, pk):
                 "peso_kg": float(pedido.peso_kg or 0),
             })
             pedido.save()
-            formset.save()
             return redirect("tienda:detalle_pedido", pk=pedido.pk)
     else:
         pedido_form = PedidoSimpleForm(instance=pedido, opciones=opciones)
-        formset = PedidoItemFormSet(instance=pedido)
 
     return render(request, "tienda/editar_pedido_items.html", {
         "pedido": pedido,
         "pedido_form": pedido_form,
-        "formset": formset,
         "opciones": opciones,
     })
 
@@ -259,7 +247,7 @@ vista de detalle de un cliente
 
 def detalle_cliente(request, pk):
     cliente = get_object_or_404(Cliente, pk=pk)
-    pedidos = cliente.pedidos.select_related('cliente').prefetch_related('items').order_by('-fecha')
+    pedidos = cliente.pedidos.select_related('cliente').order_by('-fecha')
     return render(request, "tienda/detalle_cliente.html", {"cliente": cliente, "pedidos": pedidos})
 
 '''
@@ -310,9 +298,5 @@ def eliminar_cliente(request, pk):
 
 
 
-
-def lista_pedidos(request):
-    pedidos = Pedido.objects.select_related("cliente").prefetch_related("items").order_by("-fecha")
-    return render(request, "tienda/lista_pedidos.html", {"pedidos":pedidos})
 
     

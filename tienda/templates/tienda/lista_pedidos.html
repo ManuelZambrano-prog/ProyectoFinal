@@ -15,13 +15,13 @@
                 - Cliente: {{p.cliente.nombre}}
                 - Estado: {{p.estado}}
                 - Fecha: {{p.fecha|date:"d/m/Y"}}
-                - Productos: {{p.total_productos|default:"0"}}
-                - Total: ${{p.total_precio|default:"0.00"}}
+                - Peso: {{ p.peso_kg|default:"0" }} kg
+                - Tipo de carga: {{ p.tipo_carga|default:"-" }}
                 - Tiempo estimado: {{ p.tiempo_estimado|default:"N/A" }} horas
                 <a href="{% url 'tienda:eliminar_pedido' p.pk %}" class="btn delete">Eliminar</a>
             </li>
             {%empty%}
-                <li>No hay productos disponibles</li>
+                <li>No hay pedidos disponibles</li>
         {% endfor %}
     </ul>
 {% endblock %}

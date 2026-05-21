@@ -18,14 +18,16 @@ body {
 
 h1 {
     color: var(--accent);
+    margin: 0 0 4px 0;
 }
 
 .dashboard-header {
-    background: var(--surface-soft);
+    background: transparent;
     color: var(--text);
-    border-radius: 24px;
-    padding: 24px;
-    margin-bottom: 24px;
+    border-radius: 0;
+    padding: 0 0 6px 0;
+    margin-top: 0;
+    margin-bottom: 8px;
 }
 
 .dashboard-header p,
@@ -134,7 +136,7 @@ nav {
 
 /* Dashboard styling */
 .dashboard-header {
-    margin-bottom: 24px;
+    margin-bottom: 8px;
 }
 
 .eyebrow {

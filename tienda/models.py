@@ -1,5 +1,4 @@
 from django.db import models
-from django.db.models import Sum, F 
 
 # Create your models here.
 class Producto(models.Model):
@@ -38,16 +37,6 @@ class Pedido(models.Model):
     def __str__(self):
         return f"Pedido #{self.pk} - {self.cliente.nombre} ({self.estado})"
 
-    def total_productos(self):
-        """Suma de las cantidades de todos los items del pedido"""
-        resultado = self.items.aggregate(total=Sum('cantidad'))['total']
-        return resultado if resultado is not None else 0
-
-    def total_precio(self):
-        """Suma del precio total (cantidad * precio_unitario) de todos los items"""
-        resultado = self.items.aggregate(total=Sum(F('cantidad') * F('precio_unitario')))['total']
-        return resultado if resultado is not None else 0
-
     @property
     def vehiculo_asignado(self):
         peso = float(self.peso_kg or 0)
@@ -58,19 +47,3 @@ class Pedido(models.Model):
         if peso <= 2000:
             return "Camión mediano"
         return "Camión pesado"
-
-class PedidoItem(models.Model):
-    pedido = models.ForeignKey(Pedido, on_delete=models.CASCADE, related_name="items")
-    producto = models.ForeignKey(Producto, on_delete=models.CASCADE, related_name="items")
-    cantidad = models.PositiveIntegerField(default=1)
-    precio_unitario = models.DecimalField(max_digits=10, decimal_places=2)
-
-    class Meta:
-        '''
-        Nos se permitirá que exitan dos filas con la misma combinación de pedido y producto, 
-        es decir, un mismo producto no puede aparecer dos veces en el mismo pedido. 
-        Esto garantiza la integridad de los datos y evita duplicados innecesarios 
-        en la tabla PedidoItem.
-        '''
-
-        unique_together = ("pedido", "producto")
